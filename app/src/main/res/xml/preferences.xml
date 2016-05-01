@@ -5,14 +5,10 @@
         android:title="相机预览分辨率" />
     <ListPreference
         android:key="picture_size"
-        android:title="照片分辨率"
-        android:entries="@array/pref_previewSize_entries"
-        android:entryValues="@array/pref_previewSize_values" />
+        android:title="照片分辨率" />
     <ListPreference
         android:key="video_size"
-        android:title="视频分辨率"
-        android:entries="@array/pref_previewSize_entries"
-        android:entryValues="@array/pref_previewSize_values" />
+        android:title="视频分辨率" />
     <SwitchPreference
         android:key="gps_data"
         android:title="地理位置"
@@ -29,4 +25,12 @@
     <ListPreference
         android:key="scene_mode"
         android:title="场景" />
+    <ListPreference
+        android:key="exposure_compensation"
+        android:title="曝光度" />
+    <ListPreference
+        android:key="jpeg_quality"
+        android:title="照片品质"
+        android:entries="@array/pref_jpegQuality"
+        android:entryValues="@array/pref_jpegQuality" />
 </PreferenceScreen>
