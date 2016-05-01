@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pref_previewSize_entries">
+        <item>1280x720</item>
+    </string-array>
+    <string-array name="pref_previewSize_values">
+        <item>1280x720</item>
+    </string-array>
+</resources>

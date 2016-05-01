@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <ListPreference
+        android:key="preview_size"
+        android:title="分辨率"
+        android:entries="@array/pref_previewSize_entries"
+        android:entryValues="@array/pref_previewSize_values" />
+    <SwitchPreference
+        android:key="gps_data"
+        android:title="地理位置"
+        android:defaultValue="true"/>
+</PreferenceScreen>
