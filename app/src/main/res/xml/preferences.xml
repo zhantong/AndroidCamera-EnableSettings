@@ -15,22 +15,27 @@
         android:defaultValue="true"/>
     <ListPreference
         android:key="flash_mode"
-        android:title="闪光灯" />
+        android:title="闪光灯"
+        android:defaultValue="auto"/>
     <ListPreference
         android:key="focus_mode"
         android:title="对焦模式" />
     <ListPreference
         android:key="white_balance"
-        android:title="白平衡" />
+        android:title="白平衡"
+        android:defaultValue="auto"/>
     <ListPreference
         android:key="scene_mode"
-        android:title="场景" />
+        android:title="场景"
+        android:defaultValue="auto"/>
     <ListPreference
         android:key="exposure_compensation"
-        android:title="曝光度" />
+        android:title="曝光度"
+        android:defaultValue="0"/>
     <ListPreference
         android:key="jpeg_quality"
         android:title="照片品质"
         android:entries="@array/pref_jpegQuality"
-        android:entryValues="@array/pref_jpegQuality" />
+        android:entryValues="@array/pref_jpegQuality"
+        android:defaultValue="100"/>
 </PreferenceScreen>

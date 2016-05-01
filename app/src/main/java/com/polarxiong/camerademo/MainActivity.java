@@ -2,6 +2,7 @@ package com.polarxiong.camerademo;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -19,10 +20,18 @@ public class MainActivity extends Activity{
         preview.addView(mPreview);
 
         Button buttonSettings=(Button)findViewById(R.id.button_settings);
+        SettingsFragment.passCamera(mPreview.getCameraInstance());
+        PreferenceManager.setDefaultValues(this,R.xml.preferences,false);
+        if(PreferenceManager.getDefaultSharedPreferences(this).getString(SettingsFragment.KEY_PREF_PREV_SIZE,null)==null){
+            System.out.println("Main Activity");
+            getFragmentManager().beginTransaction().replace(R.id.camera_preview,new SettingsFragment()).addToBackStack(null).commit();
+            getFragmentManager().executePendingTransactions();
+        }
+        SettingsFragment.init(PreferenceManager.getDefaultSharedPreferences(this));
+
         buttonSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SettingsFragment settingsFragment=SettingsFragment.newInstance(mPreview.getCameraInstance());
                 getFragmentManager().beginTransaction().replace(R.id.camera_preview,new SettingsFragment()).addToBackStack(null).commit();
             }
         });

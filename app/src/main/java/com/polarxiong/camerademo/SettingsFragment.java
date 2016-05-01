@@ -5,6 +5,7 @@ import android.hardware.Camera;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,101 +27,99 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     static Camera mCamera;
     static Camera.Parameters mParameters;
     public void onCreate(Bundle savedInstanceState) {
+        System.out.println("test!!!");
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
 
-        loadSupportedPreviewSize(mCamera);
-        loadSupportedPictureSize(mCamera);
-        loadSupportedVideoeSize(mCamera);
-        loadSupportedFlashMode(mCamera);
-        loadSupportedFocusMode(mCamera);
-        loadSupportedWhiteBalance(mCamera);
-        loadSupportedSceneMode(mCamera);
-        loadSupportedExposeCompensation(mCamera);
+        loadSupportedPreviewSize();
+        loadSupportedPictureSize();
+        loadSupportedVideoeSize();
+        loadSupportedFlashMode();
+        loadSupportedFocusMode();
+        loadSupportedWhiteBalance();
+        loadSupportedSceneMode();
+        loadSupportedExposeCompensation();
+        setDefault();
     }
-    static SettingsFragment newInstance(Camera camera){
-        SettingsFragment settingsFragment=new SettingsFragment();
+    public static void passCamera(Camera camera){
         mCamera=camera;
         mParameters=camera.getParameters();
-        return settingsFragment;
     }
-    private void  loadSupportedPreviewSize(Camera camera){
-        List<Camera.Size> listSupportedPreviewSize=camera.getParameters().getSupportedPreviewSizes();
-        List<String> listEntries=new ArrayList<>();
-        for(Camera.Size size:listSupportedPreviewSize){
-            String stringSize=size.width+"x"+size.height;
-            listEntries.add(stringSize);
-        }
-        final CharSequence[] supportedPreviewSize=listEntries.toArray(new CharSequence[listEntries.size()]);
+    public void setDefault(){
         ListPreference prefPreviewSize=(ListPreference)getPreferenceScreen().findPreference(KEY_PREF_PREV_SIZE);
-        prefPreviewSize.setEntries(supportedPreviewSize);
-        prefPreviewSize.setEntryValues(supportedPreviewSize);
-    }
-    private void  loadSupportedPictureSize(Camera camera){
-        List<Camera.Size> listSupportedPreviewSize=camera.getParameters().getSupportedPictureSizes();
-        List<String> listEntries=new ArrayList<>();
-        for(Camera.Size size:listSupportedPreviewSize){
-            String stringSize=size.width+"x"+size.height;
-            listEntries.add(stringSize);
+        if(prefPreviewSize.getValue()==null){
+            prefPreviewSize.setValueIndex(0);
+            ListPreference prefPictureSize=(ListPreference)getPreferenceScreen().findPreference(KEY_PREF_PIC_SIZE);
+            prefPictureSize.setValueIndex(0);
+            ListPreference prefVideoSize=(ListPreference)getPreferenceScreen().findPreference(KEY_PREF_VIDEO_SIZE);
+            prefVideoSize.setValueIndex(0);
+            ListPreference prefFocusMode=(ListPreference)getPreferenceScreen().findPreference(KEY_PREF_FOCUS_MODE);
+            if(prefFocusMode.findIndexOfValue("continuous-picture")!=-1){
+                prefFocusMode.setValue("continuous-picture");
+            }else{
+                prefFocusMode.setValue("continuous-video");
+            }
         }
-        final CharSequence[] supportedPreviewSize=listEntries.toArray(new CharSequence[listEntries.size()]);
-        ListPreference prefPreviewSize=(ListPreference)getPreferenceScreen().findPreference(KEY_PREF_PIC_SIZE);
-        prefPreviewSize.setEntries(supportedPreviewSize);
-        prefPreviewSize.setEntryValues(supportedPreviewSize);
     }
-    private void  loadSupportedVideoeSize(Camera camera){
-        List<Camera.Size> listSupportedPreviewSize=camera.getParameters().getSupportedVideoSizes();
-        List<String> listEntries=new ArrayList<>();
-        for(Camera.Size size:listSupportedPreviewSize){
-            String stringSize=size.width+"x"+size.height;
-            listEntries.add(stringSize);
-        }
-        final CharSequence[] supportedPreviewSize=listEntries.toArray(new CharSequence[listEntries.size()]);
-        ListPreference prefPreviewSize=(ListPreference)getPreferenceScreen().findPreference(KEY_PREF_VIDEO_SIZE);
-        prefPreviewSize.setEntries(supportedPreviewSize);
-        prefPreviewSize.setEntryValues(supportedPreviewSize);
+    public static void init(SharedPreferences sharedPref){
+        setPreviewSize(sharedPref.getString(KEY_PREF_PREV_SIZE,""));
+        setPictureSize(sharedPref.getString(KEY_PREF_PIC_SIZE,""));
+        setFlashMode(sharedPref.getString(KEY_PREF_FLASH_MODE,""));
+        setFocusMode(sharedPref.getString(KEY_PREF_FOCUS_MODE,""));
+        setWhiteBalance(sharedPref.getString(KEY_PREF_WHITE_BALANCE,""));
+        setSceneMode(sharedPref.getString(KEY_PREF_SCENE_MODE,""));
+        setExposComp(sharedPref.getString(KEY_PREF_EXPOS_COMP,""));
+        setJpegQuality(sharedPref.getString(KEY_PREF_JPEG_QUALITY,""));
+        setGpsData(sharedPref.getBoolean(KEY_PREF_GPS_DATA,false));
+        mCamera.stopPreview();
+        mCamera.setParameters(mParameters);
+        mCamera.startPreview();
     }
-    private void  loadSupportedFlashMode(Camera camera){
-        List<String> listSupportedPreviewSize=camera.getParameters().getSupportedFlashModes();
-        final CharSequence[] supportedPreviewSize=listSupportedPreviewSize.toArray(new CharSequence[listSupportedPreviewSize.size()]);
-        ListPreference prefPreviewSize=(ListPreference)getPreferenceScreen().findPreference(KEY_PREF_FLASH_MODE);
-        prefPreviewSize.setEntries(supportedPreviewSize);
-        prefPreviewSize.setEntryValues(supportedPreviewSize);
+    private void  loadSupportedPreviewSize(){
+        cameraSizeListToListPreference(mParameters.getSupportedPreviewSizes(),KEY_PREF_PREV_SIZE);
     }
-    private void  loadSupportedFocusMode(Camera camera){
-        List<String> listSupportedPreviewSize=camera.getParameters().getSupportedFocusModes();
-        final CharSequence[] supportedPreviewSize=listSupportedPreviewSize.toArray(new CharSequence[listSupportedPreviewSize.size()]);
-        ListPreference prefPreviewSize=(ListPreference)getPreferenceScreen().findPreference(KEY_PREF_FOCUS_MODE);
-        prefPreviewSize.setEntries(supportedPreviewSize);
-        prefPreviewSize.setEntryValues(supportedPreviewSize);
+    private  void  loadSupportedPictureSize(){
+        cameraSizeListToListPreference(mParameters.getSupportedPictureSizes(),KEY_PREF_PIC_SIZE);
     }
-    private void  loadSupportedWhiteBalance(Camera camera){
-        List<String> listSupportedPreviewSize=camera.getParameters().getSupportedWhiteBalance();
-        final CharSequence[] supportedPreviewSize=listSupportedPreviewSize.toArray(new CharSequence[listSupportedPreviewSize.size()]);
-        ListPreference prefPreviewSize=(ListPreference)getPreferenceScreen().findPreference(KEY_PREF_WHITE_BALANCE);
-        prefPreviewSize.setEntries(supportedPreviewSize);
-        prefPreviewSize.setEntryValues(supportedPreviewSize);
+    private void  loadSupportedVideoeSize(){
+        cameraSizeListToListPreference(mParameters.getSupportedVideoSizes(),KEY_PREF_VIDEO_SIZE);
     }
-    private void  loadSupportedSceneMode(Camera camera){
-        List<String> listSupportedPreviewSize=camera.getParameters().getSupportedSceneModes();
-        final CharSequence[] supportedPreviewSize=listSupportedPreviewSize.toArray(new CharSequence[listSupportedPreviewSize.size()]);
-        ListPreference prefPreviewSize=(ListPreference)getPreferenceScreen().findPreference(KEY_PREF_SCENE_MODE);
-        prefPreviewSize.setEntries(supportedPreviewSize);
-        prefPreviewSize.setEntryValues(supportedPreviewSize);
+    private void  loadSupportedFlashMode(){
+        stringListToListPreference(mParameters.getSupportedFlashModes(),KEY_PREF_FLASH_MODE);
     }
-    private void  loadSupportedExposeCompensation(Camera camera){
+    private void  loadSupportedFocusMode(){
+        stringListToListPreference(mParameters.getSupportedFocusModes(),KEY_PREF_FOCUS_MODE);
+    }
+    private void  loadSupportedWhiteBalance(){
+        stringListToListPreference(mParameters.getSupportedWhiteBalance(),KEY_PREF_WHITE_BALANCE);
+    }
+    private void  loadSupportedSceneMode(){
+        stringListToListPreference(mParameters.getSupportedSceneModes(),KEY_PREF_SCENE_MODE);
+    }
+    private void  loadSupportedExposeCompensation(){
         int minExposComp=mParameters.getMinExposureCompensation();
         int maxExposComp=mParameters.getMaxExposureCompensation();
         List<String> exposComp=new ArrayList<>();
         for(int value=minExposComp;value<=maxExposComp;value++){
             exposComp.add(Integer.toString(value));
         }
-
-        final CharSequence[] supportedPreviewSize=exposComp.toArray(new CharSequence[exposComp.size()]);
-        ListPreference prefPreviewSize=(ListPreference)getPreferenceScreen().findPreference(KEY_PREF_EXPOS_COMP);
-        prefPreviewSize.setEntries(supportedPreviewSize);
-        prefPreviewSize.setEntryValues(supportedPreviewSize);
+        stringListToListPreference(exposComp,KEY_PREF_EXPOS_COMP);
     }
+    private void cameraSizeListToListPreference(List<Camera.Size> list,String key){
+        List<String> stringList=new ArrayList<>();
+        for(Camera.Size size:list){
+            String stringSize=size.width+"x"+size.height;
+            stringList.add(stringSize);
+        }
+        stringListToListPreference(stringList,key);
+    }
+    private void stringListToListPreference(List<String> list,String key){
+        final CharSequence[] charSeq=list.toArray(new CharSequence[list.size()]);
+        ListPreference listPref=(ListPreference)getPreferenceScreen().findPreference(key);
+        listPref.setEntries(charSeq);
+        listPref.setEntryValues(charSeq);
+    }
+
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,String key){
         switch (key){
             case KEY_PREF_PREV_SIZE:
@@ -155,33 +154,33 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         mCamera.setParameters(mParameters);
         mCamera.startPreview();
     }
-    private void setPreviewSize(String key){
+    private static void setPreviewSize(String key){
         String[] split=key.split("x");
         mParameters.setPreviewSize(Integer.parseInt(split[0]),Integer.parseInt(split[1]));
     }
-    private void setPictureSize(String key){
+    private static void setPictureSize(String key){
         String[] split=key.split("x");
         mParameters.setPictureSize(Integer.parseInt(split[0]),Integer.parseInt(split[1]));
     }
-    private void setFocusMode(String key){
+    private static void setFocusMode(String key){
         mParameters.setFocusMode(key);
     }
-    private void setFlashMode(String key){
+    private static void setFlashMode(String key){
         mParameters.setFlashMode(key);
     }
-    private void setWhiteBalance(String key){
+    private static void setWhiteBalance(String key){
         mParameters.setWhiteBalance(key);
     }
-    private void setSceneMode(String key){
+    private static void setSceneMode(String key){
         mParameters.setSceneMode(key);
     }
-    private void setExposComp(String key){
+    private static void setExposComp(String key){
         mParameters.setExposureCompensation(Integer.parseInt(key));
     }
-    private void setJpegQuality(String key){
+    private static void setJpegQuality(String key){
         mParameters.setJpegQuality(Integer.parseInt(key));
     }
-    private void setGpsData(Boolean key){
+    private static void setGpsData(Boolean key){
         if(key.equals(false)){
             mParameters.removeGpsData();
         }
