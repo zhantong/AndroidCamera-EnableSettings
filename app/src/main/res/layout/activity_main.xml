@@ -3,16 +3,17 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <FrameLayout
         android:id="@+id/camera_preview"
         android:layout_width="0px"
         android:layout_height="fill_parent"
-        android:layout_weight="1"
-        />
+        android:layout_weight="1" />
+
     <Button
         android:id="@+id/button_settings"
-        android:text="设置"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right"/>
+        android:layout_gravity="right"
+        android:text="设置" />
 </LinearLayout>

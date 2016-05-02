@@ -20,10 +20,10 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     }
 
     public Camera getCameraInstance() {
-        if(mCamera==null){
-            try{
-                mCamera=Camera.open();
-            }catch (Exception e){
+        if (mCamera == null) {
+            try {
+                mCamera = Camera.open();
+            } catch (Exception e) {
                 Log.d(TAG, "camera is not available");
             }
         }
