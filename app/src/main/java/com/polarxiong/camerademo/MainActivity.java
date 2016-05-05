@@ -20,12 +20,10 @@ public class MainActivity extends Activity {
         preview.addView(mPreview);
 
         SettingsFragment.passCamera(mPreview.getCameraInstance());
-        if (PreferenceManager.getDefaultSharedPreferences(this).getString(SettingsFragment.KEY_PREF_PREV_SIZE, null) == null) {
-            getFragmentManager().beginTransaction().replace(R.id.camera_preview, new SettingsFragment()).addToBackStack(null).commit();
-            getFragmentManager().executePendingTransactions();
-        }
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+        SettingsFragment.setDefault(PreferenceManager.getDefaultSharedPreferences(this));
         SettingsFragment.init(PreferenceManager.getDefaultSharedPreferences(this));
+
         Button buttonSettings = (Button) findViewById(R.id.button_settings);
         buttonSettings.setOnClickListener(new View.OnClickListener() {
             @Override
